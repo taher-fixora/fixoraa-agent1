@@ -33,6 +33,6 @@
     "drizzle-kit": "^0.25.0",
     "postgres": "^3.4.4",
     "tailwindcss": "^3.1.0",
-    "next-auth": "^4.8.2"
+    "next-auth": "^4.7.0"
 }
 }
