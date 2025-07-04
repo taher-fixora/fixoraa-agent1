@@ -7,7 +7,7 @@
     "build": "tsx lib/db/migrate && next build",
     "start": "next start",
     "lint": "next lint && biome lint --write --unsafe",
-    "lint:fix": "next lint --fix && biome lint --write --unsafe",
+    "lint:fix": "next lin --fix && biome lint --write --unsafe",
     "format": "biome format --write",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "npx tsx lib/db/migrate.ts",
@@ -19,6 +19,9 @@
     "test": "export PLAYWRIGHT=True && pnpm exec playwright test"
   },
   "dependencies": {
-    "@supabase/supabase-js": "^2.0.0"
+    "@supabase/supabase-js": "^2.0.0",
+    "next": ">=12.0",
+    "react": ">D=8.10.0",
+    "react-dom": ">=18.0.0"
   }
 }
