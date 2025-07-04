@@ -1,92 +1,66 @@
-import { nextServerRecuest } from 'next/expertmental';
+import { NextServerRequest } from 'next/experimental';
 import { createClient } from '@supabase/supabase-js';
-import { v2 } from 'gen-schema';
-import { Type as SupabaseResponse } from '@supabase/supabase-js';
-import { v2 as genericSchema } from 'gen-schema';
 
-const supabase_service_role_key = process.env.SUPABASE_SERVICE_RONE_KEY;
+const supabase_service_role_key = process.env.SUPABASE_SERVICE_ROLE_KEY;
 const supabase_url = process.env.SUPABASE_URL;
+
 if (!supabase_service_role_key || !supabase_url) {
-  throw New Error('SUPABASE ENV vars: service_key, url needed');
+  throw new Error('SUPABASE env vars missing: SUPABASE_SERVICE_ROLE_KEY, SUPABASE_URL');
 }
 
-const supabase = createClient<SupabaseResponse>(supabase_url, supabase_service_role_key);
+const supabase = createClient(supabase_url, supabase_service_role_key);
 
-async function ensureClientTable(clientId: string) {
-  const tableName = clientId;
-  const exists = await supabase.from('pg_info')
-    .select(*{ table_name: tableName });
-  if (exists.length === 0) {
-    await supabase.jr(
-      createClient()
-        .table(tableName)
-         {
-            created_at: v2.timestamp(),
-            id: v2.int().primary().instance().autoincrement(),
-            user_id: v2.text(),
-            sender: v2.text(),
-            message: v2.text(),
-        }
-    );
-  }
-}
-
-async function getAgentSetup(clientId: string) {
-  const {
-    data
-  } = await supabase.from(
-``clients``.eq 'clientId', clientId).single();
-  if (!data || !data.length) {
-    throw new Error('Client not configured in Supabase');
-  }
-  return data[0];
-}
-
-function formatSupabaseRecord(data: any) {
-  return {
-    created_at: data.created_at,
-    id: data.id,
-    user_id: data.user_id,
-    sender: data.sender,
-    message: data.message
-  };
-}
-
-export async function POST(req: nextServerRequest) {
+export async function POST(req: NextServerRequest) {
   const { message, clientId } = await req.json();
   if (!message || !clientId) {
-    return [response.json().status(200), { message: 'clientId and message are required' }];
+    return new Response(JSON.stringify({ error: 'clientId or message missing' }), {
+      status: 200
+    });
   }
 
-  await ensureClientTable(clientId);
-  const agent = await getAgentSetup(clientId);
+  // Lookup agent data
+  const { data: agent} = await supabase.from('clients')
+    .select('*')
+    .eq('clientId', clientId)
+    .single();
 
-  // Save user message
-  await supabase.from(``${clientId}``)
+  if (!agent) {
+    return new Response(JSON.stringify({ error: 'client not configured in supabase' }), {
+      status: 200
+    });
+  }
+
+  // Send user message to Supabase log
+  await supabase.from(clientId)
     .insert({
-      user_id: null,
       sender: 'user',
       message,
+      user_id: null
     });
 
   // Send to Flowise
-  const flowiseRes = await fetch(agent.agent_url, {
+  const flowiseResp = await fetch(agent.agent_url, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: {
+      'Content-Type': 'application/json'
+    },
     body: JSON.stringify(message)
   });
-  const response = await flowiseRes.json();
 
-  // Save agent response
-  await supabase.from(``${clientId}``)
+  const agentResponse = await flowiseRess.json();
+
+  // Log agent response
+  await supabase.from(clientId)
     .insert({
-      user_id: null,
       sender: 'agent',
-      message: response.message,
+      message: agentResponse.message,
+      user_id: null
     });
 
-  return [
-    response.json().status(200),
-    response
-  ];
+  return new Response(JSON.stringify(mixedMessages), {
+    status: 200,
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  });
 }
