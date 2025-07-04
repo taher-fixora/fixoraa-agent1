@@ -12,17 +12,17 @@
     "db:generate": "drizzle-kit generate",
     "db:migrate": "npx tsx lib/db/migrate.ts",
     "db:studio": "drizzle-kit studio",
-    "db:push": "drizzle-kit push",
-    "db:pull": "drizzle-kit pull",
-    "db:check": "drizzle-kit check",
     "db:up": "drizzle-kit up",
+    "db:push": "drizzle-kit push",
+    "db:check": "drizzle-kit check",
+    "db:check": "drizzle-kit check",
     "test": "export PLAYWRIGHT=True && pnpm exec playwright test"
   },
   "dependencies": {
     "next": "15.3.0",
     "react": "18.2.0",
     "react-dom": "18.2.0",
-    "tsx": "^3.15.0",
+    "tsx": "^3.2.0",
     "@supabase/supabase-js": "^2.0.0"
   }
 }
