@@ -29,9 +29,11 @@
     "tsx": "4.19.3",
     "drizzle-orm": "^0.34.1",
     "drizzle-kit": "^0.25.0",
-    "@supabase/supabase-js": "^2.0.0",
     "dotenv": "^16.4.7",
     "tsx": "^4.19.3",
+    "postgres": "^3.4.4",
+    "postgres": "^3.4.4",
+    "drizzle-orm/postgres-js": "^0.34.1",
     "postgres": "^3.4.4"
 }
 }
