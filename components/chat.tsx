@@ -3,23 +3,8 @@ use client;
 import { useSearchParams} from 'next/navigation';
 import { useEffect, useState } from 'react';
 
-//... other imports as in original
-
 export function Chat() {
   const { query } = useSearchParams();
-  const clientId = query.object?.clientId; // ex. fixora from 'chat.js?clientId=fixora'
+  const clientId = query.object?.clientId; // ex. 'chat.js?clientId=fixora'
 
-  // ... rest of chat logic
-
-  const sendMessage = async (data) => {
-    await fetch('/api/chat', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(options.body)
-    });
-  };
-
-  return /* the usual Chat component */;
-}
+  const sendMessage = async (data)=>{\n    await fetch('/api/chat', {\n      method: 'POST',\n      headers: {\n        'Content-Type': 'application/json'\n      },\n      body: JSON.stringify({ clientId, message: data })\n    })\n  }\n  return <<div>Chat IN client: {clientId}</div>\n}
